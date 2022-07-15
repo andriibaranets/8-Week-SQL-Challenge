@@ -5,17 +5,25 @@
 ### 1. What is the total amount each customer spent at the restaurant?
 
 ````sql
-
+select customer_id, sum(price)
+from sales s
+left join menu m on
+s.product_id = m.product_id
+group by customer_id
+order by customer_id
 ````
 
 #### Steps:
-
-
+- First define tables involved:
+  - `Sales` for list of customers and what has been sold
+  - `Menu` for prices of the items
+- Column `product_id` should be used to **join** those tables
+- **GROUP BY** should be used on `customer_id`, as we want summary by the customer, in combination with **SUM** on `price`
 
 #### Answer:
+<img src="https://raw.githubusercontent.com/andriibaranets/8-Week-SQL-Challenge/main/Case%20Study%20%231%20-%20Danny's%20Diner/Results/Answer%201.png" >
 
 
-***
 
 ***
 ### 2. How many days has each customer visited the restaurant?
