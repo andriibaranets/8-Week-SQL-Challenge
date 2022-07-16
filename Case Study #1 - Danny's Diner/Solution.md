@@ -16,8 +16,8 @@ order by customer_id
 
 #### **Steps**:
 - First define tables involved:
-  - `Sales` for list of customers and what has been sold
-  - `Menu` for prices of the items
+  - `sales` for list of customers and what has been sold
+  - `menu` for prices of the items
 - Column `product_id` should be used to **join** those tables
 - **GROUP BY** should be used on `customer_id`, as we want summary by the customer, in combination with **SUM** on `price`
 - Adding **ORDER BY** just for better readability
@@ -38,7 +38,7 @@ group by customer_id
 ````
 
 #### **Steps**:
-- Translating request into data requirement, we want to see on how many **distinct** dates each customer has made a purchase
+- Translating request into data requirement, we want to see on how many **DISTINCT** dates each customer has made a purchase
 - Base table is `sales`, as customer and date info is located there
 - **GROUP BY** should be used on `customer_id`, as we want list of customers
 - **COUNT** in combination with **DISTINCT** should be used on `order_date` to get list of distinct dates on which purchases have been made
@@ -69,10 +69,10 @@ group by 1,2
 ````
 
 #### **Steps**:
-- Window function **RANK** with **PARTITION BY** `customer_id` and **ORDER BY** `order date` will provide us with the order in which products have been purchased by each clients
+- Window function **RANK** with **PARTITION BY** `customer_id` and **ORDER BY** `order date` will provide us with the order in which products have been purchased by each client
 - To make result readable, **JOIN** is done with `menu` to get `product_name`
 - All that is left is to select only rank 1 by using **WHERE** and **GROUP BY** `customer_id` and `product_name` to remove repeating purchases of the same product
-- As **WHERE** and **GROUP BY** are applied before the window functions, ranking table should be prepared first and then filered and grouped. It is done by using **WITH** and creating remporary table `ranking` 
+- As **WHERE** and **GROUP BY** are applied before the window functions, ranking table should be prepared first and then filtered and grouped. It is done by using **WITH** and creating remporary table `ranking` 
 
 
 #### **Answer**:
@@ -94,9 +94,9 @@ limit 1
 ````
 
 #### **Steps:**
-- Translating request into data question, we want to see which item has the most lines in `sales` and what is the quantity
+- Translating request into the data question, we want to see which item has the most lines in `sales` and what is the quantity
 - **GROUP BY** should be used on `product_id` from `sales` in combinarion with **COUNT** to get list of product with quantity of sales
-- **ORDER BY** `qty of sales` will provide with list ranked by popularity and **LIMIT** 1 will filter out only the leader
+- **ORDER BY** `qty of sales` will provide with list ranked by popularity and **LIMIT** 1 will filter out only the leader (Alternatively **TOP 1** could've been used on **COUNT**)
 - In order to get name of the product **JOIN** should be done with `menu` to get `product_name`
 
 
@@ -127,7 +127,7 @@ where rank = 1
 
 #### **Steps:**
 - First let's prepare table with ranks of the food for each customer.
-- **DENSE_RANK** window function in combination with **PARTITION BY** `customer_id` will provide rank of each product for each customer **DENSE RANK** should be used, as there can be a customer that bought several products the same amount
+- **DENSE_RANK** window function in combination with **PARTITION BY** `customer_id` will provide rank of each product for each customer. **DENSE RANK** should be used, as there can be a customer that bought several products the same amount
 - **LEFT JOIN** with `menu` provides the `product_name`
 - **WITH** CTE needs to be used to prepare temporary `qty_sales` ranking talbe first, as **WHERE** cannot be applied to the window function
 
@@ -180,7 +180,7 @@ where rank = 1
 ````
 
 #### Steps:
-- Translating question into data requirements, we want to see the last purchase customer has made before they became a member
+- Translating question into the data requirements, we want to see the last purchase customer has made before they became a member
 - Solution is similar to the previous question, with 2 key diffrences:
     - The *latest*, not the *earliest* date is needed, so **ORDER BY** in **DENSE_RANK** should be reversed to **DESC**
     - Purchase should be from *before* the `join_date`, not *after*, so **WHERE** condition is reversed to '<'
@@ -208,7 +208,7 @@ group by s.customer_id
 ````
 
 #### Steps:
-- Translating question into data requirements, we want to see quantity of lines from `sales`, as each line represents 1 purchase of 1 product and sum of corresponding `price` from `menu`
+- Translating question into the data requirements, we want to see quantity of lines from `sales`, as each line represents 1 purchase of 1 product and sum of corresponding `price` from `menu`
 - Start from `sales` and **LEFT JOIN** `members` to get `join date` and use it to filter only for `order_date` *before* the member became a member
 - **LEFT JOIN** `menu` to get `price`, which in this case would be equivalent to `Amount spent` on that purchase
 - Add **COUNT** to get quantity of orders
@@ -246,7 +246,7 @@ group by customer_id
 #### Steps:
 - First let's create table with points calculation for each order
 - Use `sales` with **LEFT JOIN** with `menu` to pull in `product_name` and `price` for each product, which would be same as amount of $ sent on each line
-- Use **CASE** to define how points are calculated depending on `product_name` value adn create new column `Points`
+- Use **CASE** to define how points are calculated depending on `product_name` value and create new column `Points`
 - Use **WITH** to make this a temporary table `points`
 - Use **GROUP BY** and **SUM** to get summary of `Points` for each `customer_id`
 
