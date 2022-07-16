@@ -194,43 +194,108 @@ where rank = 1
 ### 8. What is the total items and amount spent for each member before they became a member?
 #### **Solution**:
 ````sql
-
+select 
+	s.customer_id,
+	count(product_name) "Total items",
+	sum(price) "Amount spent"
+from sales s
+left join members mem on
+s.customer_id = mem.customer_id
+left join menu m on
+s.product_id = m.product_id
+where order_date < join_date
+group by s.customer_id
 ````
 
 #### Steps:
-
+- Translating question into data requirements, we want to see quantity of lines from `sales`, as each line represents 1 purchase of 1 product and sum of corresponding `price` from `menu`
+- Start from `sales` and **LEFT JOIN** `members` to get `join date` and use it to filter only for `order_date` *before* the member became a member
+- **LEFT JOIN** `menu` to get `price`, which in this case would be equivalent to `Amount spent` on that purchase
+- Add **COUNT** to get quantity of orders
+- **GROUP BY** `customer_id` to get summary for each client
 
 
 #### Answer:
-
+<img src="https://raw.githubusercontent.com/andriibaranets/8-Week-SQL-Challenge/main/Case%20Study%20%231%20-%20Danny's%20Diner/Results/Answer%208.png" >
 
 ***
 ### 9. If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
 #### **Solution**:
 ````sql
+with points as 
+(
+	select 
+		customer_id,
+		case 
+			when product_name = 'sushi' then price*20
+			else price*10
+		end as Points
+	from sales s
+	left join menu m on
+	s.product_id = m.product_id
+		
+)
 
+select 
+	customer_id,
+	sum(Points) as Points
+from points
+group by customer_id
 ````
 
 #### Steps:
-
+- First let's create table with points calculation for each order
+- Use `sales` with **LEFT JOIN** with `menu` to pull in `product_name` and `price` for each product, which would be same as amount of $ sent on each line
+- Use **CASE** to define how points are calculated depending on `product_name` value adn create new column `Points`
+- Use **WITH** to make this a temporary table `points`
+- Use **GROUP BY** and **SUM** to get summary of `Points` for each `customer_id`
 
 
 #### Answer:
-
+<img src="https://raw.githubusercontent.com/andriibaranets/8-Week-SQL-Challenge/main/Case%20Study%20%231%20-%20Danny's%20Diner/Results/Answer%209.png" >
 
 
 ***
 ### 10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
 #### **Solution**:
 ````sql
+with points as 
+(
+	select 
+		s.customer_id,
+		order_date,
+		case 
+			when order_date between join_date and (join_date+6) then price*20
+			when product_name = 'sushi' then price*20
+			else price*10
+		end as Points
+	from sales s
+	left join menu m on
+	s.product_id = m.product_id
+	left join members mem on
+	mem.customer_id = s.customer_id
+	
+)
+
+select 
+	customer_id,
+	sum(Points) as Points
+from points
+where order_date < '31.01.2021'::date
+and customer_id in ('A','B')
+group by customer_id
 
 ````
 
 #### Steps:
-
+- First let's create table with points calculation for each order using new requirements
+- Base table is the same as in previous question with `sales` **LEFT JOINED** `menu` to get price of the product
+- `members` is **LEFT JOINED** to get `join_date` for each customer
+- Additional case is added to **CASE** which doubles the point for any product if `order_date` is **BETWEEN** `join_date` and 6 days after `join_date`
+- In summary table 2 filters are added based on new requirements - `order_date` before 31.01.2021 and `customer_id` is either A or B. As **WHERE** is applied before the **GROUP BY** this will remove all of the orders made before the date out of the summary
 
 
 #### Answer:
-
+<img src="https://raw.githubusercontent.com/andriibaranets/8-Week-SQL-Challenge/main/Case%20Study%20%231%20-%20Danny's%20Diner/Results/Answer%210.png" >
 
 ***
