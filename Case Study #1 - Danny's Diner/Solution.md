@@ -72,7 +72,7 @@ group by 1,2
 - Window function **RANK** with **PARTITION BY** `customer_id` and **ORDER BY** `order date` will provide us with the order in which products have been purchased by each clients
 - To make result readable, **JOIN** is done with `menu` to get `product_name`
 - All that is left is to select only rank 1 by using **WHERE** and **GROUP BY** `customer_id` and `product_name` to remove repeating purchases of the same product
-- As **WHERE** and **GROUP BY** are applied before the window functions, ranking table should be prepared first and then filered and grouped. IT is done by using **WITH** and creating remporary table `ranking` 
+- As **WHERE** and **GROUP BY** are applied before the window functions, ranking table should be prepared first and then filered and grouped. It is done by using **WITH** and creating remporary table `ranking` 
 
 
 #### **Answer**:
@@ -129,7 +129,7 @@ where rank = 1
 - First let's prepare table with ranks of the food for each customer.
 - **DENSE_RANK** window function in combination with **PARTITION BY** `customer_id` will provide rank of each product for each customer **DENSE RANK** should be used, as there can be a customer that bought several products the same amount
 - **LEFT JOIN** with `menu` provides the `product_name`
-- **WITH** keyword needs to be used to prepare temporary `qty_sales` ranking talbe first, as **WHERE** cannot be applied to the window function
+- **WITH** CTE needs to be used to prepare temporary `qty_sales` ranking talbe first, as **WHERE** cannot be applied to the window function
 
 
 #### **Answer:**
@@ -137,47 +137,58 @@ where rank = 1
 
 
 ***
-### **5. Which item was the most popular for each customer?**
-#### **Solution**:
-````sql
 
-````
-
-#### **Steps:**
-
-
-
-#### **Answer:**
-
-
-
-***
 ### 6. Which item was purchased first by the customer after they became a member?
 #### **Solution**:
 ````sql
-
+with ranking as (
+	select s.customer_id, product_name, order_date, dense_rank() over(partition by s.customer_id order by order_date asc) as rank
+	from sales s
+	left join menu m on s.product_id = m.product_id
+	left join members mem on s.customer_id = mem.customer_id
+	where order_date >= join_date
+)
+select customer_id, product_name, order_date
+from ranking
+where rank = 1
 ````
 
 #### Steps:
-
+- **DENSE_RANK** can be used to rank every purchase individually for each customer by date, by using **PARTITION BY** `customer_id` and **ORDER BY** `order_date`
+- Only purchases made after the getting the membership are important, so `sales` should be **JOINED** with `members` to get `join_date` and filter out purchases made before that date by using **WHERE**
+- Additional **JOIN** is done with `menu` to get `product_name` in order to provide better readability of results
+- Finally, ranking table is wrapped up in **WITH** in order to filter out only items with `rank` = 1
 
 
 #### Answer:
-
+<img src="https://raw.githubusercontent.com/andriibaranets/8-Week-SQL-Challenge/main/Case%20Study%20%231%20-%20Danny's%20Diner/Results/Answer%206.png" >
 
 ***
 ### 7. Which item was purchased just before the customer became a member?
 #### **Solution**:
 ````sql
-
+with ranking as (
+	select s.customer_id, product_name, order_date, dense_rank() over(partition by s.customer_id order by order_date desc) as rank
+	from sales s
+	left join menu m on s.product_id = m.product_id
+	left join members mem on s.customer_id = mem.customer_id
+	where order_date < join_date
+)
+select customer_id, product_name, order_date
+from ranking
+where rank = 1
 ````
 
 #### Steps:
-
+- Translating question into data requirements, we want to see the last purchase customer has made before they became a member
+- Solution is similar to the previous question, with 2 key diffrences:
+    - The *latest*, not the *earliest* date is needed, so **ORDER BY** in **DENSE_RANK** should be reversed to **DESC**
+    - Purchase should be from *before* the `join_date`, not *after*, so **WHERE** condition is reversed to '<'
+- After `ranking` temporary table is prepared, the next step is the same - to filter out only `rank` = 1
 
 
 #### Answer:
-
+<img src="https://raw.githubusercontent.com/andriibaranets/8-Week-SQL-Challenge/main/Case%20Study%20%231%20-%20Danny's%20Diner/Results/Answer%207.png" >
 
 ***
 ### 8. What is the total items and amount spent for each member before they became a member?
