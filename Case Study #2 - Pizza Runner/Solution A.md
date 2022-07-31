@@ -14,7 +14,7 @@ from pizza_runner.customer_orders
 Each line of `customer_orders` represents 1 pizza ordered, so total quantity of rows will show how many pizzas were ordered.
 
 #### **Answer**:
-<img src="" >
+<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/A.1.png?raw=true" >
 
 ***
 
@@ -30,7 +30,7 @@ from pizza_runner.customer_orders
 `order_id` from `customer_orders` contains numbers of all of the orders that have been made, so we need **COUNT** **DISTINCT** order ids.
 
 #### **Answer**:
-<img src="" >
+<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/A.2.png?raw=true" >
 
 ***
 
@@ -49,7 +49,7 @@ group by 1
 - As per question, we're interested only in successfull orders, so ones **WHERE** `cancellation` is empty.
 
 #### **Answer**:
-<img src="" >
+<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/A.3.png?raw=true" >
 
 ***
 
@@ -69,7 +69,7 @@ group by pizza_name
 - For better readability, we can do a **LEFT JOIN** to `pizza_names` and get `pizza_name` to **GROUP BY** instead.
 
 #### **Answer**:
-<img src="" >
+<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/A.4.png?raw=true" >
 
 ***
 
@@ -88,7 +88,7 @@ group by customer_id,pizza_name
 - This question wans us to split quantities from previous question further down by `customer_id`. We can do it by adding column to the selection and to **GROUP BY**.
 
 #### **Answer**:
-<img src="" >
+<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/A.5.png?raw=true" >
 
 ***
 
@@ -108,7 +108,7 @@ limit 1
 - In order to get order with maximum quantity we need to **ORDER BY** `pizzas_ordered` **DESC** and **LIMIT** result only to the first one.
 
 #### **Answer**:
-<img src="" >
+<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/A.6.png?raw=true" >
 
 ***
 ### **7. For each customer, how many delivered pizzas had at least 1 change and how many had no changes?**
@@ -140,9 +140,12 @@ group by customer_id;
 - In order to get pizzas with at least 1 change, exactly the reverse condition shoul be applied, using **NOT**
 - Additionally, only pizzas delivered to the customer should be counted, meaning that `cancellation` from `runner_orders` for this `order_id` is not empty
 
-#### **Answer**:
-<img src="" >
-<img src="" >
+#### **Answers**:
+##### At least 1 change
+<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/A.7.1.png?raw=true" >
+
+##### No changes
+<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/A.7.2.png?raw=true" >
 
 ***
 
@@ -164,7 +167,7 @@ and cancellation = ' ';
 - In this case no aggregations are asked for, so **COUNT** for lines in `customer_orders` should suffice
 
 #### **Answer**:
-<img src="" >
+<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/A.8.png?raw=true" >
 
 ***
 
@@ -182,7 +185,7 @@ group by hour
 - By **COUNTING** each line of the `customer_orders` and using **GROUP BY** on hour number, we'll get the requested information
 
 #### **Answer**:
-<img src="" >
+<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/A.9.png?raw=true" >
 
 ***
 
@@ -199,6 +202,6 @@ group by DOW
 - Day of the week can be extracted by using the same **DATE_PART** function as in the previous question, from 0 for Sunday to 6 for Saturday
 
 #### **Answer**:
-<img src="" >
+<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/A.10.png?raw=true" >
 
 ***
