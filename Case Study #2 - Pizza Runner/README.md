@@ -8,13 +8,13 @@
 - [Entity Relationship Diagram](#entity-relationship-diagram)
 - [Case Study Questions](#case-study-questions)
 - [Problem statement](#problem-statement)
-- [Solution A]()
-- [Solution B]()
-- [Solution C]()
-- [Solution D]()
-- [Solution E]()
-- [Database setup]()
-- [Data Cleanup]()
+- [Solution A](https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Solution%20A.md)
+- [Solution B](https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Solution%20B.md)
+- [Solution C](https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Solution%20C.md)
+- [Solution D](https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Solution%20D.md)
+- [Solution E](https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Solution%20E.md)
+- [Database setup](https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/DB%20Setup.sql)
+- [Data Cleanup](https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Data%20Cleanup.md)
 
 ***
 
@@ -42,7 +42,7 @@ All datasets exist within the pizza_runner database schema - be sure to include 
 
 ## Entity Relationship Diagram
 
-![image]()
+![image](https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Entity%20relationship%20diagram.png?raw=true)
 
 ## Case Study Questions
 
