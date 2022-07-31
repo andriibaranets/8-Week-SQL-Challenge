@@ -6,7 +6,7 @@
 select *
 from pizza_runner.customer_orders
 ````
-<img src="" >
+<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/Customer_orders_before.png?raw=true" >
 
 Let's replace all of uwanted values with ' ' instead, which will be easier to manipulate.
 For this, table needs to be **UPDATED** and values for those columns should be **SET** to ' ' **WHERE** values are ***NaN*** or ***null***. This can be done in 2 statements below.
@@ -14,17 +14,17 @@ For this, table needs to be **UPDATED** and values for those columns should be *
 ````sql
 update pizza_runner.customer_orders
 set exclusions = ' '
-where exclusions is null or exclusions = '' or exclusions = 'null'
+where exclusions is null or exclusions = '' or exclusions = 'null';
 
 update pizza_runner.customer_orders
 set extras = ' '
-where extras is null or extras = '' or extras = 'null'
+where extras is null or extras = '' or extras = 'null';
 
-select * from pizza_runner.customer_orders
+select * from pizza_runner.customer_orders;
 
 ````
 
-<img src="" >
+<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/Customer_orders_after.png?raw=true" >
 
 ## Table 3: runner_orders
 
@@ -35,4 +35,41 @@ Additionally, `distance` and `duration` sometimes contain names of the units, su
 select *
 from pizza_runner.runner_orders
 ````
-<img src="" >
+<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/pizza_runners_before.png?raw=true" >
+
+Issue with ***NaN*** and ***null*** can be resolved the same way as in the previous table, bu updating the rows for columns in question and setting value to ' '.
+
+````sql
+update pizza_runner.runner_orders
+set pickup_time = ' '
+where pickup_time is null or pickup_time = '' or pickup_time = 'null';
+
+update pizza_runner.runner_orders
+set distance = ' '
+where distance is null or distance = '' or distance = 'null';
+
+update pizza_runner.runner_orders
+set duration = ' '
+where duration is null or duration = '' or duration = 'null';
+
+update pizza_runner.runner_orders
+set cancellation = ' '
+where cancellation is null or cancellation = '' or cancellation = 'null';
+````
+
+In case of measurements only part of the value should be **REPLACED**, so function **regexp_replace** can be used to cover both 'km' and variations of 'min'.
+
+````sql
+update pizza_runner.runner_orders
+set distance = regexp_replace(distance, 'km', '');
+
+
+update pizza_runner.runner_orders
+set duration = regexp_replace(duration, 'min.*', '');
+
+select *
+from pizza_runner.runner_orders
+````
+
+
+<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/pizza_runners_after.png?raw=true" >
