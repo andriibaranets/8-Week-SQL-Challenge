@@ -41,8 +41,8 @@ Issue with ***NaN*** and ***null*** can be resolved the same way as in the previ
 
 ````sql
 update pizza_runner.runner_orders
-set pickup_time = ' '
-where pickup_time is null or pickup_time = '' or pickup_time = 'null';
+set pickup_time = null
+where pickup_time = ' ' or pickup_time = 'null';
 
 update pizza_runner.runner_orders
 set distance = ' '
