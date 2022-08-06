@@ -18,7 +18,7 @@ group by 1
 - Each row in `runners` represent 1 runner that have signed up, so we just need to **COUNT** the rows and **GROUP BY** week number that can be extracted from `registration_date` by using **DATE_PART**
 
 #### **Answer**:
-<img src="" >
+<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/B.1.png?raw=true" >
 
 
 
@@ -53,7 +53,7 @@ select
 - Then we aggregate results by using **GROUP BY** `runner_id` and finding **AVG** on that interval
 - In order to get minutes from interval, first we can **EXTRACT** **EPOCH** from the average `pickup_interval`, that will give us duration of the period in seconds. After that to get duration in minutes, we divide seconds by 60 and **CAST** number into **INTEGER**.
 #### **Answer**:
-<img src="" >
+<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/B.2.png?raw=true" >
 
 
 
@@ -62,7 +62,23 @@ select
 
 #### **Solution**:
 ````sql
-
+with order_qty
+as
+(
+	select
+		a.order_id,
+		pickup_time,
+		count(*) as pizza_count,
+		pickup_time::timestamp - max(order_time) as interval
+	from pizza_runner.runner_orders a
+	left join pizza_runner.customer_orders b on
+	a.order_id = b.order_id
+	group by 1,2
+)
+select pizza_count,
+	(extract(EPOCH from avg(interval))/60)::int as average_time
+from order_qty
+group by 1
 ````
 
 #### **Steps**:
@@ -72,7 +88,7 @@ select
 - Using CTE **WITH** we then **AVG** the interval, but this time **GROUP BY** to `pizza_count`
 
 #### **Answer**:
-<img src="" >
+<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/B.3.png?raw=true" >
 
 - We can see that more pizzas in the order means more time between ordering and pickup
 
@@ -115,7 +131,7 @@ group by 1
 - All of the steps are split using CTE **WITH**
 
 #### **Answer**:
-<img src="" >
+<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/B.4.png?raw=true" >
 
 
 
@@ -134,7 +150,7 @@ where duration <> ' '
 - THis can be done bu using **MAX** and **MIN** and then finding difference betwen them
 
 #### **Answer**:
-<img src="" >
+<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/B.5.png?raw=true" >
 
 
 
@@ -158,7 +174,7 @@ order by runner_ID, order_ID
 - Also we would want speed in km/hour, so `duration` should be divided by 60
 
 #### **Answer**:
-<img src="" >
+<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/B.6.png?raw=true" >
 
 - We can see that speed increases for runners with each new orders, although speed of increase differs from runner to runner.
 - All of the runner start from similar speed on their first order - around 35-40 km/hour
@@ -184,4 +200,4 @@ order by runner_ID
 - Additional caveat is that **COUNT** returns ***bigint*** type in PostgreSQL, and division of ***bigint*** gets transformed into ***int***, so we need to first cast it into ***float*** to get percentages from the division
 
 #### **Answer**:
-<img src="" >
+<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/B.7.png?raw=true" >
