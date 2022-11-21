@@ -111,14 +111,100 @@ order by order_qty DESC
 
 #### **Solution**:
 ````sql
+ALTER TABLE pizza_runner.customer_orders ADD id serial primary key;
 
+with 
+exclusions as
+(
+	select 
+		id,
+		order_id,
+		trim(unnest(string_to_array(exclusions,','))) as exclusions
+	from pizza_runner.customer_orders
+	where exclusions is not null and exclusions <> ' '
+),
+exclusions_name as
+(
+	select 
+		id,
+		order_id,
+		trim(unnest(string_to_array(exclusions,','))) as exclusions,
+		topping_name
+	from exclusions
+	left join pizza_runner.pizza_toppings t on
+	t.topping_id::text = exclusions
+),
+extras  as
+(
+	select 
+		id,
+		order_id,
+		trim(unnest(string_to_array(extras ,','))) as extras 
+	from pizza_runner.customer_orders
+	where extras  is not null and extras  <> ' '
+),
+extras_name as
+(
+	select 
+		id,
+		order_id,
+		trim(unnest(string_to_array(extras,','))) as extras ,
+		topping_name
+	from extras 
+	left join pizza_runner.pizza_toppings t on
+	t.topping_id::text = extras 
+),
+
+adding_exclusions as 
+(
+	select 
+		o.id,
+		o.order_id,
+		CONCAT(
+			n.pizza_name,
+			case 
+				when e.id is NULL then ''
+				else CONCAT(' - Exclude ', string_agg(e.topping_name, ', ') )
+			END
+		) as record
+	from pizza_runner.customer_orders o
+	left join pizza_runner.pizza_names n on o.pizza_id = n.pizza_id
+	left join exclusions_name e on o.id = e.id
+	group by o.id,o.order_id,n.pizza_name,e.id 
+),
+
+adding_extras as
+
+(
+	select 
+		a.id,
+		a.order_id,
+		CONCAT(
+			a.record,
+			case 
+				when e.id is NULL then ''
+				else CONCAT(' - Extras ', string_agg(e.topping_name, ', ') )
+			END
+		) as record
+	from adding_exclusions a
+	left join extras_name e on a.id = e.id
+	GROUP BY a.id, a.order_id,a.record, e.id
+)
+
+select * from adding_extras
 ````
 
 #### **Steps**:
-- Question asks us to generate table where each row is `pizza_name` ordered with names of exclusions and extras, if there were any.
+- We need to generate table where each row is `pizza_name` ordered with names of exclusions and extras, if there were any.
+- First, let's add ID column to `customer_orders`, as we'll need to keep track which extras and inclusions are needed for each pizza. It can be done by **ALTER TABLE** and adding a new column (with type `serial` in case for PostgreSQL)
+- This question will require use of CTE, as we'll need to transfor and re-combine data before presenting it
+- First, using the same logic as in previous 2 questions, we create `extras_name` and `exclusions_name` temporary tables with list of extras and exclusions tied to unique ID from `customer_orders`
+- Then we start with list of `ID` and `order_id` and add `exclusions_name` to it. Using **STRING_AGG**, we convert column `topping_name` into string in needed format.
+- Same is repeated in `adding_extras`, but for extras
+- As a result we get table with `order_id` and corresponding `record` that has been requested
 
 #### **Answer**:
-<img src="" >
+<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case Study %232 - Pizza Runner/Results/C.6.png?raw=true"">
 
 
 
