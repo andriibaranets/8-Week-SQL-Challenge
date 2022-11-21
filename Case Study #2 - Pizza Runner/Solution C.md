@@ -97,7 +97,7 @@ order by order_qty DESC
 - The most picked exclusion is Cheese with 4 orders.
 
 #### **Answer**:
-<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/C.3.png?raw=true"" >
+<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/C.3.png?raw=true" >
 
 
 
@@ -204,7 +204,7 @@ select * from adding_extras
 - As a result we get table with `order_id` and corresponding `record` that has been requested
 
 #### **Answer**:
-<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case Study %232 - Pizza Runner/Results/C.6.png?raw=true"">
+<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/C.4.png?raw=true">
 
 
 
