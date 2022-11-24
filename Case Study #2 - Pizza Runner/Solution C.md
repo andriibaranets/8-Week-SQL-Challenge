@@ -216,14 +216,134 @@ For example: `Meat Lovers: 2xBacon, Beef, ... , Salami`
 
 #### **Solution**:
 ````sql
+ with extras
+as
+(
+	select 
+		id,
+		trim(unnest(string_to_array(extras ,','))) as extras 
+	from pizza_runner.customer_orders
+	where extras is not null and extras  <> ' '
+),
 
+exclusions
+as
+(
+	select 
+		id,
+		trim(unnest(string_to_array(exclusions ,','))) as exclusion 
+	from pizza_runner.customer_orders
+	where exclusions is not null and extras  <> ' '
+),
+
+recipes_expanded
+as
+(
+	select
+		pizza_id,
+		trim(unnest(string_to_array(toppings ,','))) as component
+	from pizza_runner.pizza_recipes
+),
+
+order_recipes
+as
+(
+	select
+		c.id,
+		r.component
+	from pizza_runner.customer_orders c
+	left join recipes_expanded r on c.pizza_id = r.pizza_id
+),
+
+removing_exclusions
+as
+(
+	select
+		o.id,
+		o.component
+	from order_recipes o
+	left join exclusions e on o.id = e.id and o.component = e.exclusion
+	where e.id is NULL
+),
+
+adding_extras
+as
+(
+	select 
+		id,
+		component
+	from removing_exclusions
+	UNION ALL
+	select 
+		id,
+		extras as component
+	from extras
+	order by 1
+),
+
+counting_components
+as
+(
+	select
+		id,
+		component,
+		count(*) as qty
+	from adding_extras
+	group by 1,2
+	order by 1,2
+),
+
+adding_names
+as
+(
+	select
+		c.id,
+		case
+			when c.qty > 1 then CONCAT(qty,'x ', p.topping_name)
+			else p.topping_name
+		end as component_name
+	from counting_components c
+	left join pizza_runner.pizza_toppings p on c.component::INT = p.topping_id
+	order by id, topping_name
+),
+
+orders_with_pizza_names
+as
+(
+	select 
+		c.id,
+		c.order_id,
+		p.pizza_name
+	from pizza_runner.customer_orders c
+	left join pizza_runner.pizza_names p on c.pizza_id = p.pizza_id
+),
+
+result
+as
+(
+	select
+		o.id,
+		o.order_id,
+		CONCAT(o.pizza_name,': ', string_agg(a.component_name, ', '))
+	from orders_with_pizza_names o
+	left join adding_names a on o.id = a.id
+	group by o.id, o.pizza_name, o.order_id
+	
+)
+select * from result order by 1
 ````
 
 #### **Steps**:
-
+- First, let's unpack strings into columns for 3 cases - `extras`, `exclusions` and `recipes_expanded`. Last one is connected by **LEFT JOIN** with `customer_orders` to create `order_recipes` which will contan list of toppings for base versions of the pizza orders.
+- Next step is to remove exclusions. This is done with **LEFT JOIN** of `recipes_expanded` with `exclusions` and removing any lines that are present in `exclusions`.
+- Resulting `removing_exclusions` is then connected by **UNION ALL** with `extras`. This provides us `adding_extras`, which describes all of the components ordered on each order, each line describing an instance of component being ordered.
+- This should be **GROUP BY** `id` and `component` to provide us with qty of components ordered for each original line of the order.
+- After that, names of the components are taken from `pizza_toppings` and we prepare `component_name` where we add qty of component ordered if it's more than 1. This is where we **ORDER BY** `id` and `topping_name` to ensure alphabeticall order of the ingridients.
+- Final preparation step is to create `orders_with_pizza_names` where each line is name of the pizza ordered with `id` and `order_id`
+- After that `orders_with_pizza_names` and `adding_names` are joined and needed string is provided by using **STRING_AGG** on `component_name` and **CONCAT** to add `pizza_name` to it and format to the requirements.
 
 #### **Answer**:
-<img src="" >
+<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/C.5.png?raw=true">
 
 
 
@@ -233,14 +353,102 @@ For example: `Meat Lovers: 2xBacon, Beef, ... , Salami`
 
 #### **Solution**:
 ````sql
+with extras
+as
+(
+	select 
+		id,
+		trim(unnest(string_to_array(extras ,','))) as extras 
+	from pizza_runner.customer_orders
+	where extras is not null and extras  <> ' '
+),
 
+exclusions
+as
+(
+	select 
+		id,
+		trim(unnest(string_to_array(exclusions ,','))) as exclusion 
+	from pizza_runner.customer_orders
+	where exclusions is not null and extras  <> ' '
+),
+
+recipes_expanded
+as
+(
+	select
+		pizza_id,
+		trim(unnest(string_to_array(toppings ,','))) as component
+	from pizza_runner.pizza_recipes
+),
+
+order_recipes
+as
+(
+	select
+		c.id,
+		r.component
+	from pizza_runner.customer_orders c
+	left join recipes_expanded r on c.pizza_id = r.pizza_id
+),
+
+removing_exclusions
+as
+(
+	select
+		o.id,
+		o.component
+	from order_recipes o
+	left join exclusions e on o.id = e.id and o.component = e.exclusion
+	where e.id is NULL
+),
+
+adding_extras
+as
+(
+	select 
+		id,
+		component
+	from removing_exclusions
+	UNION ALL
+	select 
+		id,
+		extras as component
+	from extras
+	order by 1
+),
+
+counting_components
+as
+(
+	select
+		component,
+		count(*) as qty
+	from adding_extras
+	group by 1
+	order by 1
+),
+
+adding_names
+as
+(
+	select
+		p.topping_name as ingredient_name,
+		c.qty
+	from counting_components c
+	left join pizza_runner.pizza_toppings p on c.component::INT = p.topping_id
+	order by c.qty DESC
+)
+select * from adding_names
 ````
 
 #### **Steps**:
-
+- For this question, we need to get list of used ingredient for each order, with exclusions and extras taken into account. This has been already done in the previous question by `counting_components` step.
+- We repeat the same steps, this time doing **GROUP BY** only by `component`, as we're interested in total qty, not for just one line.
+- In the next step we're `adding_names` from `pizza_runner.pizza_toppings` and **ORDER BY** `qty` **DESC** to provide us with a requested list.
 
 #### **Answer**:
-<img src="" >
+<img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/C.6.png?raw=true">
 
 
 
