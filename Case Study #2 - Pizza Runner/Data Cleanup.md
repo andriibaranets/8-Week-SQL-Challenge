@@ -8,17 +8,17 @@ from pizza_runner.customer_orders
 ````
 <img src="https://github.com/andriibaranets/8-Week-SQL-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Results/Customer_orders_before.png?raw=true" >
 
-Let's replace all of uwanted values with ' ' instead, which will be easier to manipulate.
-For this, table needs to be **UPDATED** and values for those columns should be **SET** to ' ' **WHERE** values are ***NaN*** or ***null***. This can be done in 2 statements below.
+Let's replace all of uwanted values with '' instead, which will be easier to manipulate.
+For this, table needs to be **UPDATED** and values for those columns should be **SET** to '' **WHERE** values are ***NaN*** or ***null***. This can be done in 2 statements below.
 
 ````sql
 update pizza_runner.customer_orders
-set exclusions = ' '
-where exclusions is null or exclusions = '' or exclusions = 'null';
+set exclusions = ''
+where exclusions is null or exclusions = ' ' or exclusions = 'null';
 
 update pizza_runner.customer_orders
-set extras = ' '
-where extras is null or extras = '' or extras = 'null';
+set extras = ''
+where extras is null or extras = ' ' or extras = 'null';
 
 select * from pizza_runner.customer_orders;
 
