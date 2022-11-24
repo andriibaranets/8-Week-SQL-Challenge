@@ -2,7 +2,86 @@
 <img src="https://8weeksqlchallenge.com/images/case-study-designs/2.png" alt="Image" width="500" height="520">
 
 ***
-### **1. What is the total amount each customer spent at the restaurant?**
+### **1. If a Meat Lovers pizza costs $12 and Vegetarian costs $10 and there were no charges for changes - how much money has Pizza Runner made so far if there are no delivery fees?**
+
+#### **Solution**:
+````sql
+
+````
+
+#### **Steps**:
+
+
+#### **Answer**:
+<img src="" >
+
+
+
+***
+***
+### **2. What if there was an additional $1 charge for any pizza extras? Add cheese is $1 extra**
+
+#### **Solution**:
+````sql
+
+````
+
+#### **Steps**:
+
+
+#### **Answer**:
+<img src="" >
+
+
+
+***
+***
+### **3. The Pizza Runner team now wants to add an additional ratings system that allows customers to rate their runner, how would you design an additional table for this new dataset - generate a schema for this new table and insert your own data for ratings for each successful customer order between 1 to 5.**
+
+#### **Solution**:
+````sql
+
+````
+
+#### **Steps**:
+
+
+#### **Answer**:
+<img src="" >
+
+
+
+***
+***
+### **4. Using your newly generated table - can you join all of the information together to form a table which has the following information for successful deliveries?**
+- `customer_id`
+- `order_id`
+- `runner_id`
+- `rating`
+- `order_time`
+- `pickup_time`
+- Time between order and pickup
+- Delivery duration
+- Average speed
+- Total number of pizzas
+
+
+#### **Solution**:
+````sql
+
+````
+
+#### **Steps**:
+
+
+#### **Answer**:
+<img src="" >
+
+
+
+***
+***
+### **5. If a Meat Lovers pizza was $12 and Vegetarian $10 fixed prices with no cost for extras and each runner is paid $0.30 per kilometre traveled - how much money does Pizza Runner have left over after these deliveries?**
 
 #### **Solution**:
 ````sql
